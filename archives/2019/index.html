@@ -262,7 +262,7 @@
       
         <i class="fas fa-user" aria-hidden="true"></i>
       
-      <p>John Doe</p>
+      <p>DBH</p>
     </a>
   </div>
 
@@ -320,7 +320,7 @@
   <section class="article typo">
     <div class="article-entry" itemprop="articleBody">
       <p>昨天在b站看到了一些关于如何搭建自己博客的视频。出于兴趣，决定动手搭一下。搭建期间也遇到了不少坑。搭完博客正好发布第一篇文章，就在这和大家分享一下搭建的过程。</p>
-<p><img src="https://img-blog.csdnimg.cn/20190519143719730.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxMzkyMjEzODUy,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<p><a href="https://i.loli.net/2019/05/23/5ce63dfa3b27d51238.png" target="_blank" rel="noopener"><img src="https://i.loli.net/2019/05/23/5ce63dfa3b27d51238.png" alt="01-1.png"></a></p>
       
         <div class="readmore">
           <a href="/2019/05/19/搭建hexo博客部署到github和coding/" class="flat-box">
@@ -621,7 +621,24 @@
     。
   </div>
   <i class="fas fa-chart-area"></i>
-	<span class="post-count">字数统计：1.6k</span>
+  <span id="timeDate">载入天数...</span><span id="times">载入时分秒...</span>
+<script>
+    var now = new Date(); 
+    function createtime() { 
+        var grt= new Date("05/18/2019 17:38:00");//在此处修改你的建站时间
+        now.setTime(now.getTime()+250); 
+        days = (now - grt ) / 1000 / 60 / 60 / 24; dnum = Math.floor(days); 
+        hours = (now - grt ) / 1000 / 60 / 60 - (24 * dnum); hnum = Math.floor(hours); 
+        if(String(hnum).length ==1 ){hnum = "0" + hnum;} minutes = (now - grt ) / 1000 /60 - (24 * 60 * dnum) - (60 * hnum); 
+        mnum = Math.floor(minutes); if(String(mnum).length ==1 ){mnum = "0" + mnum;} 
+        seconds = (now - grt ) / 1000 - (24 * 60 * 60 * dnum) - (60 * 60 * hnum) - (60 * mnum); 
+        snum = Math.round(seconds); if(String(snum).length ==1 ){snum = "0" + snum;} 
+        document.getElementById("timeDate").innerHTML = "本站已努力运行 "+dnum+" 天 "; 
+        document.getElementById("times").innerHTML = hnum + " 小时 " + mnum + " 分 " + snum + " 秒"; 
+    } 
+setInterval("createtime()",250);
+</script>
+	<span class="post-count"> || 字数统计：1.6k</span>
 	
 	<script type="text/javascript" src="/js/cooltext.js"></script>
 
@@ -859,5 +876,7 @@ ess");}
   <!--单击显示文字-->
   <script type="text/javascript" src="/js/click_show_text.js"></script>
   <script type="text/javascript" src="/js/caihong.js"></script>
+  <!--浏览器搞笑标题-->
+<script type="text/javascript" src="\js\FunnyTitle.js"></script>
 <script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"debug":false,"model":{"jsonPath":"/live2dw/assets/rem.model.json"},"display":{"position":"right","width":300,"height":400},"mobile":{"show":false},"react":{"opacity":0.85},"log":false});</script></body>
 </html>

@@ -5,9 +5,43 @@ jQuery(document).ready(function($) {
         ("富强", "民主", "文明", "和谐", "自由", "平等", "公正", "法治", "爱国", "敬业", "诚信", "友善");
         var $i = $("<span/>").text(a[a_idx]);
         var b = new Array
-        ("#7fdbff", "#39cccc", "#2ecc40", "#ffdc00", "#01ff70", "#ff851b", "#ff4136", "#b1ddc9");
+        ("#7fdbff", 
+		"#39cccc", 
+		"#2ecc40", 
+		"#ffdc00", 
+		"#01ff70", 
+		"#ff851b", 
+		"#ff4136", 
+		"#b1ddc9",
+		"#FF9966",
+		"#FF6666",
+		"#FFCCCC",
+		"#CC9966",
+		"#666666",
+		"#CC9999",
+		"#FF6666",
+		"#FFFF66",
+		"#99CC66",
+		"#CC9999",
+		"#FFFFCC",
+		"#CCCC99",
+		"#FFCCCC",
+		"#FFFF99",
+		"#CCCCFF",
+		"#0099CC",
+		"#CCCCCC",
+		"#FF6666",
+		"#FFCC99",
+		"#FFFF99",
+		"#99CC99",
+		"#FFCC99",
+		"#CCFF99",
+		"#CCCCCC",
+		"#FFCC99",
+		"#FFFFCC",
+		"#99CCFF");
 		a_idx = (a_idx + 1) % a.length;
-		b_idx = Math.floor(Math.random()*8);
+		b_idx = Math.floor(Math.random()*35);
         var x = e.pageX,
         y = e.pageY;
 		
