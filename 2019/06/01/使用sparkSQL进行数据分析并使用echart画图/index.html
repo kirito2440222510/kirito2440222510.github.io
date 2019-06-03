@@ -1,0 +1,1060 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  
+  <title>使用sparkSQL进行数据分析并使用echart画图 | DBHblog</title>
+  
+  
+
+  
+  <link rel="alternate" href="/atom.xml" title="DBHblog">
+  
+
+  <meta name="HandheldFriendly" content="True">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <!-- meta -->
+  
+
+  <!-- link -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css">
+  
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/node-waves@0.7.6/dist/waves.min.css">
+  
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.6.3/css/all.min.css">
+  
+
+  
+  <link rel="shortcut icon" type="image/x-icon" href="https://i.loli.net/2019/05/23/5ce64f4ecb69e30085.jpg">
+  
+
+  
+    <link rel="stylesheet" href="/style.css">
+  
+
+  <script>
+    function setLoadingBarProgress(num) {
+      document.getElementById('loading-bar').style.width=num+"%";
+    }
+  </script>
+
+  
+  
+</head>
+
+<body>
+  
+  
+  <div class="cover-wrapper">
+    <cover class="cover post half">
+      
+        
+  <img class="logo shake" src="https://img.vim-cn.com/3a/8ccc912c506a6f882fb17ae3def6b144d4229e.jpg">
+
+
+  <div class="m_search">
+    <form name="searchform" class="form u-search-form">
+      <input type="text" class="input u-search-input" placeholder>
+      <i class="icon fas fa-search fa-fw"></i>
+    </form>
+  </div>
+
+<div class="menu navgation">
+  <ul class="h-list">
+    
+      
+        <li>
+          <a class="nav home" href="/" id="home">
+            <i class="fas fa-rss fa-fw"></i>&nbsp;主页
+          </a>
+        </li>
+      
+        <li>
+          <a class="nav home" href="/categories/" id="categories">
+            <i class="fas fa-folder-open fa-fw"></i>&nbsp;分类
+          </a>
+        </li>
+      
+        <li>
+          <a class="nav home" href="/tags/" rel="nofollow" id="tags">
+            <i class="fas fa-tags fa-fw"></i>&nbsp;标签
+          </a>
+        </li>
+      
+        <li>
+          <a class="nav home" href="/archives/" rel="nofollow" id="archives">
+            <i class="fas fa-archive fa-fw"></i>&nbsp;归档
+          </a>
+        </li>
+      
+        <li>
+          <a class="nav home" href="/about/" rel="nofollow" id="about">
+            <i class="fas fa-info-circle fa-fw"></i>&nbsp;关于
+          </a>
+        </li>
+      
+    
+  </ul>
+</div>
+
+      
+    </cover>
+    <header class="l_header pure">
+  <div id="loading-bar-wrapper">
+    <div id="loading-bar" class="pure"></div>
+  </div>
+
+	<div class="wrapper">
+		<div class="nav-main container container--flex">
+      <a class="logo flat-box" href="/">
+        
+          DBHblog
+        
+      </a>
+			<div class="menu navgation">
+				<ul class="h-list">
+          
+  					
+  						<li>
+								<a class="nav flat-box" href="/" id="home">
+									<i class="fas fa-grin fa-fw"></i>&nbsp;主页
+								</a>
+							</li>
+      			
+  						<li>
+								<a class="nav flat-box" href="/categories/" rel="nofollow" id="categories">
+									<i class="fas fa-folder-open fa-fw"></i>&nbsp;分类
+								</a>
+							</li>
+      			
+  						<li>
+								<a class="nav flat-box" href="/tags/" rel="nofollow" id="tags">
+									<i class="fas fa-tag fa-fw"></i>&nbsp;标签
+								</a>
+							</li>
+      			
+  						<li>
+								<a class="nav flat-box" href="/archives/" rel="nofollow" id="archives">
+									<i class="fas fa-archive fa-fw"></i>&nbsp;归档
+								</a>
+							</li>
+      			
+      		
+				</ul>
+			</div>
+
+			
+				<div class="m_search">
+					<form name="searchform" class="form u-search-form">
+						<input type="text" class="input u-search-input" placeholder="搜索">
+						<i class="icon fas fa-search fa-fw"></i>
+					</form>
+				</div>
+			
+			<ul class="switcher h-list">
+				
+					<li class="s-search"><a class="fas fa-search fa-fw" href="javascript:void(0)"></a></li>
+				
+				<li class="s-menu"><a class="fas fa-bars fa-fw" href="javascript:void(0)"></a></li>
+			</ul>
+		</div>
+
+		<div class="nav-sub container container--flex">
+			<a class="logo flat-box"></a>
+			<ul class="switcher h-list">
+				<li class="s-comment"><a class="flat-btn fas fa-comments fa-fw" href="javascript:void(0)"></a></li>
+        
+          <li class="s-toc"><a class="flat-btn fas fa-list fa-fw" href="javascript:void(0)"></a></li>
+        
+			</ul>
+		</div>
+	</div>
+</header>
+	<aside class="menu-phone">
+    <header>
+		<nav class="menu navgation">
+      <ul>
+        
+          
+            <li>
+							<a class="nav flat-box" href="/" id="home">
+								<i class="fas fa-clock fa-fw"></i>&nbsp;近期文章
+							</a>
+            </li>
+          
+            <li>
+							<a class="nav flat-box" href="/archives/" rel="nofollow" id="archives">
+								<i class="fas fa-archive fa-fw"></i>&nbsp;文章归档
+							</a>
+            </li>
+          
+            <li>
+							<a class="nav flat-box" href="/projects/" id="projects">
+								<i class="fas fa-code-branch fa-fw"></i>&nbsp;开源项目
+							</a>
+            </li>
+          
+            <li>
+							<a class="nav flat-box" href="/friends/" rel="nofollow" id="friends">
+								<i class="fas fa-link fa-fw"></i>&nbsp;我的友链
+							</a>
+            </li>
+          
+            <li>
+							<a class="nav flat-box" href="https://xaoxuu.com/wiki/material-x/" rel="nofollow" id="https:xaoxuu.comwikimaterial-x">
+								<i class="fas fa-book fa-fw"></i>&nbsp;主题文档
+							</a>
+            </li>
+          
+            <li>
+							<a class="nav flat-box" href="/about/" rel="nofollow" id="about">
+								<i class="fas fa-info-circle fa-fw"></i>&nbsp;关于小站
+							</a>
+            </li>
+          
+       
+      </ul>
+		</nav>
+    </header>
+	</aside>
+<script>setLoadingBarProgress(40);</script>
+
+  </div>
+
+
+  <div class="l_body">
+    <div class='body-wrapper'>
+      <div class="l_main">
+  
+
+  
+    <article id="post" class="post white-box article-type-post" itemscope itemprop="blogPost">
+      
+
+
+  <section class="meta">
+    
+    
+    <div class="meta" id="header-meta">
+      
+        
+  
+    <h1 class="title">
+      <a href="/2019/06/01/使用sparkSQL进行数据分析并使用echart画图/">
+        使用sparkSQL进行数据分析并使用echart画图
+      </a>
+    </h1>
+  
+
+
+      
+      <div class="new-meta-box">
+        
+          
+        
+          
+            
+  <div class="new-meta-item author">
+    <a href="/" rel="nofollow">
+      
+        <i class="fas fa-user" aria-hidden="true"></i>
+      
+      <p>DBH</p>
+    </a>
+  </div>
+
+
+          
+        
+          
+            <div class="new-meta-item date">
+  <a class="notlink">
+    <i class="fas fa-calendar-alt" aria-hidden="true"></i>
+    <p>2019-06-01</p>
+  </a>
+</div>
+
+          
+        
+          
+            
+  
+  <div class="new-meta-item category">
+    <a href="/categories/spark/" rel="nofollow">
+      <i class="fas fa-folder-open" aria-hidden="true"></i>
+      <p>spark</p>
+    </a>
+  </div>
+
+
+          
+        
+          
+            
+  
+    <div class="new-meta-item browse busuanzi">
+      <a class="notlink">
+        <i class="fas fa-eye" aria-hidden="true"></i>
+        <p>
+          <span id="busuanzi_value_page_pv">
+            <i class="fas fa-spinner fa-spin fa-fw" aria-hidden="true"></i>
+          </span>
+        </p>
+      </a>
+    </div>
+  
+
+
+          
+        
+          
+            
+
+          
+        
+      </div>
+      
+        <hr>
+      
+    </div>
+  </section>
+
+
+      <section class="article typo">
+        <div class="article-entry" itemprop="articleBody">
+          <h3 id="使用sparkSQL进行数据分析并使用echart画图使用sparkSQL进行数据分析并使用echart画图"><a href="#使用sparkSQL进行数据分析并使用echart画图使用sparkSQL进行数据分析并使用echart画图" class="headerlink" title="使用sparkSQL进行数据分析并使用echart画图使用sparkSQL进行数据分析并使用echart画图"></a>使用sparkSQL进行数据分析并使用echart画图使用sparkSQL进行数据分析并使用echart画图</h3><p>刚学了一些大数据的基础知识，老师留了一个小实验，用sparkSql或mapreduce分析数据，然后在进行数据可视化。因为sparkSql可以使用sql语句查询，所以采取的sparksql进行数据分析。</p>
+<p>下面就记录一些操作</p>
+<a id="more"></a>
+<h5 id="实验要求："><a href="#实验要求：" class="headerlink" title="实验要求："></a>实验要求：</h5><p>老师给的5000条数据，格式是这样的</p>
+<p><a href="https://i.loli.net/2019/06/03/5cf4fbd6b7fa986536.png" target="_blank" rel="noopener"><img src="https://i.loli.net/2019/06/03/5cf4fbd6b7fa986536.png" alt="实验要求.png"></a></p>
+<p>- 分析发布公司最多的Top 10 公司名称及发布职位数量【饼状图展示】</p>
+<p>- 分析招聘职位最多的Top5 职位名称及数量【柱状图展示】</p>
+<p>- 分析工资最高的职位Top3 职位名称及工资【折线图展示】</p>
+<h5 id="前提条件："><a href="#前提条件：" class="headerlink" title="前提条件："></a>前提条件：</h5><p>在idea中配置好hadoop、scala和spark环境</p>
+<p>配置好环境之后就可以开始写代码了</p>
+<h4 id="一、用sparkSQL分析数据"><a href="#一、用sparkSQL分析数据" class="headerlink" title="一、用sparkSQL分析数据"></a>一、用sparkSQL分析数据</h4><h5 id="1、新建一个scala-object"><a href="#1、新建一个scala-object" class="headerlink" title="1、新建一个scala object"></a>1、新建一个scala object</h5><figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.apache.hadoop.io.<span class="type">LongWritable</span></span><br><span class="line"><span class="keyword">import</span> org.apache.hadoop.mapred.<span class="type">TextInputFormat</span></span><br><span class="line"><span class="keyword">import</span> org.apache.spark.rdd.<span class="type">RDD</span></span><br><span class="line"><span class="keyword">import</span> org.apache.spark.sql.types.&#123;<span class="type">DataTypes</span>, <span class="type">StructField</span>&#125;</span><br><span class="line"><span class="keyword">import</span> org.apache.spark.&#123;<span class="type">SparkConf</span>, <span class="type">SparkContext</span>&#125;</span><br><span class="line"><span class="keyword">import</span> org.apache.spark.sql.&#123;<span class="type">Row</span>, <span class="type">SQLContext</span>, <span class="type">SparkSession</span>&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> scala.collection.mutable.<span class="type">ArrayBuffer</span></span><br><span class="line"><span class="keyword">import</span> scala.xml.<span class="type">Text</span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">object</span> <span class="title">DataAnalysis</span> </span>&#123;</span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">main</span></span>(args: <span class="type">Array</span>[<span class="type">String</span>]): <span class="type">Unit</span> = &#123;</span><br><span class="line">    <span class="keyword">val</span> conf = <span class="keyword">new</span> <span class="type">SparkConf</span>().setMaster(<span class="string">"local[*]"</span>).setAppName(<span class="string">"dataFrameTest"</span>)</span><br><span class="line">      .set(<span class="string">"spark.port.maxRetries"</span>,<span class="string">"1000"</span>);</span><br><span class="line">    <span class="keyword">val</span> sc = <span class="keyword">new</span> <span class="type">SparkContext</span>(conf)</span><br><span class="line">    <span class="keyword">val</span> spark = <span class="type">SparkSession</span>.builder().config(conf).getOrCreate()</span><br><span class="line">    <span class="keyword">import</span> spark.implicits._</span><br><span class="line">    <span class="keyword">val</span> data = spark.read</span><br><span class="line">      .format(<span class="string">"com.databricks.spark.csv"</span>)</span><br><span class="line">      .option(<span class="string">"inferSchema"</span>, <span class="string">"true"</span>)</span><br><span class="line">      .option(<span class="string">"header"</span>, <span class="string">"true"</span>) <span class="comment">//reading the headers</span></span><br><span class="line">      .option(<span class="string">"mode"</span>, <span class="string">"DROPMALFORMED"</span>)</span><br><span class="line">      .option(<span class="string">"nullValue"</span>, <span class="string">"?"</span>)</span><br><span class="line">      .csv(<span class="string">"c:\\51Job_python_5000.txt"</span>);</span><br><span class="line">    data.show()</span><br><span class="line">    <span class="keyword">val</span> dataDF = data.toDF(<span class="string">"work"</span>,<span class="string">"company"</span>,<span class="string">"add"</span>,<span class="string">"salary"</span>,<span class="string">"date"</span>)</span><br><span class="line">    <span class="keyword">val</span> dataDF2 = dataDF.filter(<span class="string">"work != '' and company != '' and add != '' and salary != '' and date != ''"</span>)</span><br><span class="line">    <span class="comment">//dataDF.show()</span></span><br><span class="line">    <span class="comment">//dataDF2.show()</span></span><br><span class="line">    <span class="keyword">val</span> message = dataDF2.createOrReplaceTempView(<span class="string">"message"</span>)</span><br><span class="line">    <span class="comment">//第一题答案</span></span><br><span class="line">    <span class="keyword">val</span> resdata = spark.sql(<span class="string">"select count(*) num,company FROM message group by company"</span>).registerTempTable(<span class="string">"q1temp"</span>)</span><br><span class="line">    <span class="keyword">val</span> resdata2 = spark.sql(<span class="string">"select num,company from (select num,company,row_number() OVER(ORDER BY num DESC) rank from q1temp) tmp where rank &lt;= 10"</span>)</span><br><span class="line">    resdata2.show()</span><br><span class="line">    <span class="comment">//第二题答案</span></span><br><span class="line">    <span class="keyword">val</span> resdata3 = spark.sql(<span class="string">"select count(*) num,work FROM message group by work"</span>)</span><br><span class="line">    resdata3.show()</span><br><span class="line">    resdata3.registerTempTable(<span class="string">"q2temp"</span>)</span><br><span class="line">    <span class="keyword">val</span> resdata4 = spark.sql(<span class="string">"select num,work from (select num,work,row_number() OVER(ORDER BY num DESC) rank from q2temp) tmp where rank &lt;= 5"</span>)</span><br><span class="line">    resdata4.show()</span><br><span class="line">    <span class="comment">//第三题答案</span></span><br><span class="line">    <span class="keyword">val</span> resdata5 = spark.sql(<span class="string">""</span><span class="string">" select work,company,salary,</span></span><br><span class="line"><span class="string">      (CASE</span></span><br><span class="line"><span class="string">      WHEN salary like '%千/月%' then translate(split(salary,'[-/]')[1],'千','')*1000</span></span><br><span class="line"><span class="string">      when salary like '%万/月%' then translate(split(salary,'[-/]')[1],'万','')*10000</span></span><br><span class="line"><span class="string">      when salary like '%万/年%' then round(translate(split(salary,'[-/]')[1],'万','')*10000/12)</span></span><br><span class="line"><span class="string">      else 0 end) new_salary from message "</span><span class="string">""</span>).registerTempTable(<span class="string">"q3temp"</span>)</span><br><span class="line">    <span class="keyword">val</span> resdata6 = spark.sql(<span class="string">"select work,company,salary,new_salary from (select work,company,salary,new_salary,row_number() OVER(ORDER BY new_salary DESC) rank from q3temp ) tmp where rank &lt;= 3"</span>)</span><br><span class="line">    resdata6.show()</span><br><span class="line"></span><br><span class="line">    resdata2.write.json(<span class="string">"C://result/res1"</span>)</span><br><span class="line">    resdata4.write.json(<span class="string">"C://result/res2"</span>)</span><br><span class="line">    resdata6.write.json(<span class="string">"C://result/res3"</span>)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>总结一些点：</p>
+<p>（1）读取csv文件中文乱码</p>
+<p>解决办法：我是直接把csv文件的内容复制出来放到一个txt里面保存成utf-8格式，之后直接读取.txt。因为csv就是用逗号分隔的格式虽然后缀是txt但保留了csv格式的内容，所以可以使用.csv()方法读取</p>
+<p>（2）第一题把resdata和resdata2写成一条语句错误，我也不知道为啥</p>
+<p>解决办法：我把它分成两条语句用registerTempTable生成了一个临时表就好使了</p>
+<p>（3）row_number() OVER(ORDER BY num DESC)内置函数</p>
+<p>语法格式：row_number() over(partition by 分组列 order by 排序列 desc)</p>
+<p>over()里头可以分组以及排序，因为我需要按照num小到大所以没写分组</p>
+<p>（4）write.json()输出的json文件</p>
+<h5 id="2、运行这个scala-object"><a href="#2、运行这个scala-object" class="headerlink" title="2、运行这个scala object"></a>2、运行这个scala object</h5><p>执行之后会生成json文件</p>
+<h4 id="二、用echart画图"><a href="#二、用echart画图" class="headerlink" title="二、用echart画图"></a>二、用echart画图</h4><h5 id="1、把输出的json文件导入到Java-web工程的web下边"><a href="#1、把输出的json文件导入到Java-web工程的web下边" class="headerlink" title="1、把输出的json文件导入到Java web工程的web下边"></a>1、把输出的json文件导入到Java web工程的web下边</h5><h5 id="2、修改一下json文件的格式"><a href="#2、修改一下json文件的格式" class="headerlink" title="2、修改一下json文件的格式"></a>2、修改一下json文件的格式</h5><p>用spark输出的json文件格式不太对，在后面读取会有问题，所以修改一下，输出的三个文件都修改</p>
+<p>修改前：<br><a href="https://i.loli.net/2019/06/03/5cf4fbd33ac8c49482.png" target="_blank" rel="noopener"><img src="https://i.loli.net/2019/06/03/5cf4fbd33ac8c49482.png" alt="spark输出的json格式.png"></a></p>
+<p>修改后：<br><a href="https://i.loli.net/2019/06/03/5cf4fbd35ea9b45229.png" target="_blank" rel="noopener"><img src="https://i.loli.net/2019/06/03/5cf4fbd35ea9b45229.png" alt="修改后的josn格式.png"></a></p>
+<h5 id="3、新建jsp用echart画图"><a href="#3、新建jsp用echart画图" class="headerlink" title="3、新建jsp用echart画图"></a>3、新建jsp用echart画图</h5><p>直接贴代码</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br></pre></td><td class="code"><pre><span class="line">&lt;%@ page contentType=<span class="string">"text/html;charset=UTF-8"</span> language=<span class="string">"java"</span> %&gt;</span><br><span class="line">&lt;html&gt;</span><br><span class="line">&lt;head&gt;</span><br><span class="line">    &lt;title&gt;Title&lt;/title&gt;</span><br><span class="line">    &lt;script src="/js/jquery.js"&gt;&lt;/script&gt;</span><br><span class="line">    &lt;script src="/js/echarts.min.js"&gt;&lt;/script&gt;</span><br><span class="line">&lt;/head&gt;</span><br><span class="line">&lt;body&gt;</span><br><span class="line">    &lt;input type=<span class="string">"button"</span> id=<span class="string">"btn1"</span> value=<span class="string">"显示第一题结果图"</span>&gt;</span><br><span class="line">    &lt;input type=<span class="string">"button"</span> id=<span class="string">"btn2"</span> value=<span class="string">"显示第二题结果图"</span>&gt;</span><br><span class="line">    &lt;input type=<span class="string">"button"</span> id=<span class="string">"btn3"</span> value=<span class="string">"显示第三题结果图"</span>&gt;</span><br><span class="line">    &lt;div id="main1" style="width: 1000px;height: 500px;background-color: azure"&gt;&lt;/div&gt;</span><br><span class="line">    &lt;div id="main2" style="width: 1000px;height: 500px;background-color: azure"&gt;&lt;/div&gt;</span><br><span class="line">    &lt;div id="main3" style="width: 1000px;height: 500px;background-color: azure"&gt;&lt;/div&gt;</span><br><span class="line">&lt;/body&gt;</span><br><span class="line">&lt;script&gt;</span><br><span class="line">    <span class="keyword">var</span> q1Data = [];</span><br><span class="line">    <span class="keyword">var</span> q1Company = [];</span><br><span class="line">     $(function () &#123;</span><br><span class="line">            <span class="comment">// 异步加载数据</span></span><br><span class="line">         $(<span class="string">'#btn1'</span>).click(function () &#123;</span><br><span class="line">             q1Data = [];</span><br><span class="line">             q1Company = [];</span><br><span class="line">            $.getJSON(<span class="string">"part1.json"</span>,<span class="string">""</span>,function (data) &#123;</span><br><span class="line">                $.each(data,function (i, v) &#123;</span><br><span class="line">                    q1Data.push(&#123;</span><br><span class="line">                        name: v.company,</span><br><span class="line">                        value: v.num</span><br><span class="line">                    &#125;);</span><br><span class="line">                    q1Company.push(v.company)</span><br><span class="line">                &#125;)</span><br><span class="line">                console.info(q1Company)</span><br><span class="line">                console.info(q1Data)</span><br><span class="line">                getChart()</span><br><span class="line">            &#125;);</span><br><span class="line">         &#125;)</span><br><span class="line">         $(<span class="string">'#btn2'</span>).click(function () &#123;</span><br><span class="line">             q2Work = [];</span><br><span class="line">             q2Num = [];</span><br><span class="line">             $.getJSON(<span class="string">"part2.json"</span>,<span class="string">""</span>,function (data) &#123;</span><br><span class="line">                 $.each(data,function (i, v) &#123;</span><br><span class="line">                     q2Work.push(v.work);</span><br><span class="line">                     q2Num.push(v.num)</span><br><span class="line">                 &#125;)</span><br><span class="line">                 console.info(q2Work)</span><br><span class="line">                 console.info(q2Num)</span><br><span class="line">                 getChart2()</span><br><span class="line">             &#125;);</span><br><span class="line">         &#125;)</span><br><span class="line">         $(<span class="string">'#btn3'</span>).click(function () &#123;</span><br><span class="line">             q3Work = [];</span><br><span class="line">             q3Salary = [];</span><br><span class="line">             $.getJSON(<span class="string">"part3.json"</span>,<span class="string">""</span>,function (data) &#123;</span><br><span class="line">                 $.each(data,function (i, v) &#123;</span><br><span class="line">                     q3Work.push(v.work);</span><br><span class="line">                     q3Salary.push(v.new_salary)</span><br><span class="line">                 &#125;)</span><br><span class="line">                 console.info(q3Work)</span><br><span class="line">                 console.info(q3Salary)</span><br><span class="line">                 getChart3()</span><br><span class="line">             &#125;);</span><br><span class="line">         &#125;)</span><br><span class="line">     &#125;)</span><br><span class="line">     <span class="function">function <span class="title">getChart</span> <span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">var</span> myChart = echarts.init(document.getElementById(<span class="string">'main1'</span>));</span><br><span class="line">        <span class="comment">// 显示标题，图例和空的坐标轴</span></span><br><span class="line">        myChart.setOption(&#123;</span><br><span class="line">            title : &#123;</span><br><span class="line">                text: <span class="string">'发布公司最多的Top 10'</span>,</span><br><span class="line">                subtext: <span class="string">'发布公司最多的Top 10'</span>,</span><br><span class="line">                x:<span class="string">'center'</span></span><br><span class="line">            &#125;,</span><br><span class="line">            tooltip: &#123;</span><br><span class="line">                trigger: <span class="string">'item'</span>,</span><br><span class="line">                formatter: <span class="string">"&#123;a&#125; &lt;br/&gt;&#123;b&#125;: &#123;c&#125; (&#123;d&#125;%)"</span></span><br><span class="line">            &#125;,</span><br><span class="line">            legend: &#123;</span><br><span class="line">                orient: <span class="string">'vertical'</span>,</span><br><span class="line">                x: <span class="string">'left'</span>,</span><br><span class="line">                data: q1Company</span><br><span class="line">            &#125;,</span><br><span class="line">            series: [</span><br><span class="line">                &#123;</span><br><span class="line">                    name:<span class="string">'来源虚构'</span>,</span><br><span class="line">                    type:<span class="string">'pie'</span>,</span><br><span class="line">                    radius: [<span class="string">'50%'</span>, <span class="string">'70%'</span>],</span><br><span class="line">                    avoidLabelOverlap: <span class="keyword">false</span>,</span><br><span class="line">                    label: &#123;</span><br><span class="line">                        normal: &#123;</span><br><span class="line">                            show: <span class="keyword">false</span>,</span><br><span class="line">                            position: <span class="string">'center'</span></span><br><span class="line">                        &#125;,</span><br><span class="line">                        emphasis: &#123;</span><br><span class="line">                            show: <span class="keyword">true</span>,</span><br><span class="line">                            textStyle: &#123;</span><br><span class="line">                                fontSize: <span class="string">'30'</span>,</span><br><span class="line">                                fontWeight: <span class="string">'bold'</span></span><br><span class="line">                            &#125;</span><br><span class="line">                        &#125;</span><br><span class="line">                    &#125;,</span><br><span class="line">                    labelLine: &#123;</span><br><span class="line">                        normal: &#123;</span><br><span class="line">                            show: <span class="keyword">false</span></span><br><span class="line">                        &#125;</span><br><span class="line">                    &#125;,</span><br><span class="line">                    data:q1Data</span><br><span class="line">                &#125;</span><br><span class="line">            ]</span><br><span class="line">        &#125;);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function">function <span class="title">getChart2</span> <span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">var</span> myChart = echarts.init(document.getElementById(<span class="string">'main2'</span>));</span><br><span class="line">        <span class="comment">// 显示标题，图例和空的坐标轴</span></span><br><span class="line">        myChart.setOption(&#123;</span><br><span class="line">            title : &#123;</span><br><span class="line">                text: <span class="string">'招聘职位最多的Top5'</span>,</span><br><span class="line">                subtext: <span class="string">'招聘职位最多的Top5'</span>,</span><br><span class="line">                x:<span class="string">'center'</span></span><br><span class="line">            &#125;,</span><br><span class="line">            color: [<span class="string">'#3398DB'</span>],</span><br><span class="line">            tooltip : &#123;</span><br><span class="line">                trigger: <span class="string">'axis'</span>,</span><br><span class="line">                axisPointer : &#123;            <span class="comment">// 坐标轴指示器，坐标轴触发有效</span></span><br><span class="line">                    type : <span class="string">'shadow'</span>        <span class="comment">// 默认为直线，可选为：'line' | 'shadow'</span></span><br><span class="line">                &#125;</span><br><span class="line">            &#125;,</span><br><span class="line">            grid: &#123;</span><br><span class="line">                left: <span class="string">'3%'</span>,</span><br><span class="line">                right: <span class="string">'4%'</span>,</span><br><span class="line">                bottom: <span class="string">'3%'</span>,</span><br><span class="line">                containLabel: <span class="keyword">true</span></span><br><span class="line">            &#125;,</span><br><span class="line">            xAxis : [</span><br><span class="line">                &#123;</span><br><span class="line">                    type : <span class="string">'category'</span>,</span><br><span class="line">                    data : q2Work,</span><br><span class="line">                    axisTick: &#123;</span><br><span class="line">                        alignWithLabel: <span class="keyword">true</span></span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">            ],</span><br><span class="line">            yAxis : [</span><br><span class="line">                &#123;</span><br><span class="line">                    type : <span class="string">'value'</span></span><br><span class="line">                &#125;</span><br><span class="line">            ],</span><br><span class="line">            series : [</span><br><span class="line">                &#123;</span><br><span class="line">                    name:<span class="string">'来源虚构'</span>,</span><br><span class="line">                    type:<span class="string">'bar'</span>,</span><br><span class="line">                    barWidth: <span class="string">'60%'</span>,</span><br><span class="line">                    data:q2Num</span><br><span class="line">                &#125;</span><br><span class="line">            ]</span><br><span class="line">        &#125;);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function">function <span class="title">getChart3</span> <span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">var</span> myChart = echarts.init(document.getElementById(<span class="string">'main3'</span>));</span><br><span class="line">        <span class="comment">// 显示标题，图例和空的坐标轴</span></span><br><span class="line">        myChart.setOption(&#123;</span><br><span class="line">            title : &#123;</span><br><span class="line">                text: <span class="string">'工资最高的职位Top3'</span>,</span><br><span class="line">                subtext: <span class="string">'工资最高的职位Top3'</span>,</span><br><span class="line">                x:<span class="string">'center'</span></span><br><span class="line">            &#125;,</span><br><span class="line">            xAxis: &#123;</span><br><span class="line">                type: <span class="string">'category'</span>,</span><br><span class="line">                data: q3Work</span><br><span class="line">            &#125;,</span><br><span class="line">            yAxis: &#123;</span><br><span class="line">                type: <span class="string">'value'</span></span><br><span class="line">            &#125;,</span><br><span class="line">            series: [&#123;</span><br><span class="line">                data: q3Salary,</span><br><span class="line">                type: <span class="string">'line'</span>,</span><br><span class="line">            &#125;]</span><br><span class="line">        &#125;);</span><br><span class="line">    &#125;</span><br><span class="line">&lt;/script&gt;</span><br><span class="line">&lt;/html&gt;</span><br></pre></td></tr></table></figure>
+<h5 id="4、效果图"><a href="#4、效果图" class="headerlink" title="4、效果图"></a>4、效果图</h5><p><a href="https://i.loli.net/2019/06/03/5cf4fbd4361dd63198.png" target="_blank" rel="noopener"><img src="https://i.loli.net/2019/06/03/5cf4fbd4361dd63198.png" alt="结果1.png"></a></p>
+<p><a href="https://i.loli.net/2019/06/03/5cf4fbd35ee1410067.png" target="_blank" rel="noopener"><img src="https://i.loli.net/2019/06/03/5cf4fbd35ee1410067.png" alt="结果2.png"></a></p>
+<p><a href="https://i.loli.net/2019/06/03/5cf4fbd35e3f265196.png" target="_blank" rel="noopener"><img src="https://i.loli.net/2019/06/03/5cf4fbd35e3f265196.png" alt="结果3.png"></a></p>
+<p>总结几点：</p>
+<p>1、填入数据时注意，echart的饼状图需要的数据形式是</p>
+<p><code>name：xxx  value：xxx</code></p>
+<p>填入数据用这样的方式</p>
+<figure class="highlight jsp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">q1Data.push(&#123;</span><br><span class="line">               name: v.company,</span><br><span class="line">               value: v.num</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<p>2、定义div的时候给一个长宽大小，echart渲染才能显示出来</p>
+
+        </div>
+        
+          
+
+
+  <section class="meta" id="footer-meta">
+    <hr>
+    <div class="new-meta-box">
+      
+        
+          <div class="new-meta-item date" itemprop="dateUpdated" datetime="2019-06-03T19:16:44+08:00">
+  <a class="notlink">
+    <i class="fas fa-clock" aria-hidden="true"></i>
+    <p>最后更新于 2019年6月3日</p>
+  </a>
+</div>
+
+        
+      
+        
+          
+  
+  <div class="new-meta-item meta-tags"><a class="tag" href="/tags/spark/" rel="nofollow"><i class="fas fa-hashtag" aria-hidden="true"></i>&nbsp;<p>spark</p></a></div> <div class="new-meta-item meta-tags"><a class="tag" href="/tags/sparkSQL/" rel="nofollow"><i class="fas fa-hashtag" aria-hidden="true"></i>&nbsp;<p>sparkSQL</p></a></div> <div class="new-meta-item meta-tags"><a class="tag" href="/tags/echart-js/" rel="nofollow"><i class="fas fa-hashtag" aria-hidden="true"></i>&nbsp;<p>echart.js</p></a></div> <div class="new-meta-item meta-tags"><a class="tag" href="/tags/大数据/" rel="nofollow"><i class="fas fa-hashtag" aria-hidden="true"></i>&nbsp;<p>大数据</p></a></div> <div class="new-meta-item meta-tags"><a class="tag" href="/tags/数据分析/" rel="nofollow"><i class="fas fa-hashtag" aria-hidden="true"></i>&nbsp;<p>数据分析</p></a></div>
+
+
+        
+      
+        
+          
+  <div class="new-meta-item share -mob-share-list">
+  <div class="-mob-share-list share-body">
+    
+      
+        <a class="-mob-share-qq" title="QQ好友" rel="external nofollow noopener noreferrer" href="http://connect.qq.com/widget/shareqq/index.html?url=/2019/06/01/使用sparkSQL进行数据分析并使用echart画图/&title=使用sparkSQL进行数据分析并使用echart画图 | DBHblog&summary=使用sparkSQL进行数据分析并使用echart画图使用sparkSQL进行数据分析并使用echart画图刚学了一些大数据的基础知识，老师留了一个小实验，用sparkSql或mapreduce分析数据，然后在进行数据可视化。因为sparkSql可以使用sql语句查询，所以采取的sparksql进行数据分析。
+下面就记录一些操作">
+          
+            <img src="https://cdn.jsdelivr.net/gh/xaoxuu/assets@19.1.9/logo/128/qq.png">
+          
+        </a>
+      
+    
+      
+        <a class="-mob-share-qzone" title="QQ空间" rel="external nofollow noopener noreferrer" href="https://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?url=/2019/06/01/使用sparkSQL进行数据分析并使用echart画图/&title=使用sparkSQL进行数据分析并使用echart画图 | DBHblog&summary=使用sparkSQL进行数据分析并使用echart画图使用sparkSQL进行数据分析并使用echart画图刚学了一些大数据的基础知识，老师留了一个小实验，用sparkSql或mapreduce分析数据，然后在进行数据可视化。因为sparkSql可以使用sql语句查询，所以采取的sparksql进行数据分析。
+下面就记录一些操作">
+          
+            <img src="https://cdn.jsdelivr.net/gh/xaoxuu/assets@19.1.9/logo/128/qzone.png">
+          
+        </a>
+      
+    
+      
+        <a class="-mob-share-weibo" title="微博" rel="external nofollow noopener noreferrer" href="http://service.weibo.com/share/share.php?url=/2019/06/01/使用sparkSQL进行数据分析并使用echart画图/&title=使用sparkSQL进行数据分析并使用echart画图 | DBHblog&summary=使用sparkSQL进行数据分析并使用echart画图使用sparkSQL进行数据分析并使用echart画图刚学了一些大数据的基础知识，老师留了一个小实验，用sparkSql或mapreduce分析数据，然后在进行数据可视化。因为sparkSql可以使用sql语句查询，所以采取的sparksql进行数据分析。
+下面就记录一些操作">
+          
+            <img src="https://cdn.jsdelivr.net/gh/xaoxuu/assets@19.1.9/logo/128/weibo.png">
+          
+        </a>
+      
+    
+  </div>
+</div>
+
+
+
+        
+      
+    </div>
+  </section>
+
+
+        
+        
+            <div class="prev-next">
+                
+                
+                    <section class="next">
+                        <span class="art-item-right" aria-hidden="true">
+                            <h6>下一页&nbsp;<i class="fas fa-chevron-right" aria-hidden="true"></i></h6>
+                            <h4>
+                                <a href="/2019/05/23/d3-js学习记录/" rel="prev" title="d3.js学习记录">
+                                    
+                                        d3.js学习记录
+                                    
+                                </a>
+                            </h4>
+                            
+                                
+                                <h6 class="tags">
+                                    <a class="tag" href="/tags/d3-js数据可视化/"><i class="fas fa-tags fa-fw" aria-hidden="true"></i>d3.js数据可视化</a> <a class="tag" href="/tags/数据可视化/"><i class="fas fa-tags fa-fw" aria-hidden="true"></i>数据可视化</a> <a class="tag" href="/tags/d3-js/"><i class="fas fa-tags fa-fw" aria-hidden="true"></i>d3.js</a>
+                                </h6>
+                            
+                        </span>
+                    </section>
+                
+            </div>
+        
+      </section>
+    </article>
+  
+
+  
+    <!-- 显示推荐文章和评论 -->
+
+
+
+  <article class="post white-box comments">
+    <section class="article typo">
+      <h4><i class="fas fa-comments fa-fw" aria-hidden="true"></i>&nbsp;评论</h4>
+      
+      
+      
+      
+        <section id="comments">
+          <div id="valine_container" class="valine_thread">
+            <i class="fas fa-spinner fa-spin fa-fw"></i>
+          </div>
+        </section>
+      
+    </section>
+  </article>
+
+
+  
+
+
+
+
+<!-- 根据页面mathjax变量决定是否加载MathJax数学公式js -->
+
+
+
+  <script>
+    window.subData = {
+      title: '使用sparkSQL进行数据分析并使用echart画图',
+      tools: true
+    }
+  </script>
+
+
+</div>
+<aside class="l_side">
+  
+    
+    
+      
+        
+          
+          
+            <section class="widget author">
+  <div class="content pure">
+    
+      <div class="avatar">
+        <img class="avatar shake" src="https://img.vim-cn.com/9e/9d85b0710dbd86f82ede5b29dcdc9a7ec4a0cf.jpg">
+      </div>
+    
+    
+      <div class="text">
+        
+        
+        
+          <p><span id="jinrishici-sentence">柳暗花明又一村</span></p>
+          <script src="https://sdk.jinrishici.com/v2/browser/jinrishici.js" charset="utf-8"></script>
+        
+      </div>
+    
+    
+      <div class="social-wrapper">
+        
+          
+            <a href="/atom.xml" class="social fas fa-rss flat-btn" target="_blank" rel="external nofollow noopener noreferrer">
+            </a>
+          
+        
+          
+            <a href="mailto:me@xaoxuu.com" class="social fas fa-envelope flat-btn" target="_blank" rel="external nofollow noopener noreferrer">
+            </a>
+          
+        
+          
+            <a href="https://github.com/kirito2440222510?tab=repositories" class="social fab fa-github flat-btn" target="_blank" rel="external nofollow noopener noreferrer">
+            </a>
+          
+        
+          
+            <a href="https://music.163.com/#/user/home?id=135042447" class="social fas fa-headphones-alt flat-btn" target="_blank" rel="external nofollow noopener noreferrer">
+            </a>
+          
+        
+      </div>
+	  <div align="center" id="binft"></div>
+    
+  </div>
+</section>
+
+          
+        
+      
+        
+          
+          
+            
+  <section class="widget toc-wrapper">
+    
+<header class="pure">
+  <div><i class="fas fa-list fa-fw" aria-hidden="true"></i>&nbsp;&nbsp;本文目录</div>
+  
+    <div class="wrapper"><a class="s-toc rightBtn" rel="external nofollow noopener noreferrer" href="javascript:void(0)"><i class="fas fa-thumbtack fa-fw"></i></a></div>
+  
+</header>
+
+    <div class="content pure">
+      <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#使用sparkSQL进行数据分析并使用echart画图使用sparkSQL进行数据分析并使用echart画图"><span class="toc-text">使用sparkSQL进行数据分析并使用echart画图使用sparkSQL进行数据分析并使用echart画图</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#实验要求："><span class="toc-text">实验要求：</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#前提条件："><span class="toc-text">前提条件：</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#一、用sparkSQL分析数据"><span class="toc-text">一、用sparkSQL分析数据</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#1、新建一个scala-object"><span class="toc-text">1、新建一个scala object</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#2、运行这个scala-object"><span class="toc-text">2、运行这个scala object</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#二、用echart画图"><span class="toc-text">二、用echart画图</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#1、把输出的json文件导入到Java-web工程的web下边"><span class="toc-text">1、把输出的json文件导入到Java web工程的web下边</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#2、修改一下json文件的格式"><span class="toc-text">2、修改一下json文件的格式</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#3、新建jsp用echart画图"><span class="toc-text">3、新建jsp用echart画图</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#4、效果图"><span class="toc-text">4、效果图</span></a></li></ol></li></ol>
+    </div>
+  </section>
+
+
+          
+        
+      
+        
+          
+          
+            <section class="widget grid">
+  
+<header class="pure">
+  <div><i class="fas fa-map-signs fa-fw" aria-hidden="true"></i>&nbsp;&nbsp;站内导航</div>
+  
+</header>
+
+  <div class="content pure">
+    <ul class="grid navgation">
+      
+        <li><a class="flat-box" title="/" href="/" id="home">
+          
+            <i class="fas fa-clock fa-fw" aria-hidden="true"></i>
+          
+          近期文章
+        </a></li>
+      
+        <li><a class="flat-box" title="/blog/archives/" href="/blog/archives/" rel="nofollow" id="blogarchives">
+          
+            <i class="fas fa-archive fa-fw" aria-hidden="true"></i>
+          
+          文章归档
+        </a></li>
+      
+        <li><a class="flat-box" title="https://blog.csdn.net/qq392213852" href="https://blog.csdn.net/qq392213852" id="https:blog.csdn.netqq392213852">
+          
+            <i class="fas fa-code-branch fa-fw" aria-hidden="true"></i>
+          
+          CSDN
+        </a></li>
+      
+        <li><a class="flat-box" title="/friends/" href="/friends/" rel="nofollow" id="friends">
+          
+            <i class="fas fa-link fa-fw" aria-hidden="true"></i>
+          
+          我的友链
+        </a></li>
+      
+        <li><a class="flat-box" title="https://xaoxuu.com/wiki/material-x/" href="https://xaoxuu.com/wiki/material-x/" rel="nofollow" id="https:xaoxuu.comwikimaterial-x">
+          
+            <i class="fas fa-book fa-fw" aria-hidden="true"></i>
+          
+          主题文档
+        </a></li>
+      
+        <li><a class="flat-box" title="/about/" href="/about/" rel="nofollow" id="about">
+          
+            <i class="fas fa-info-circle fa-fw" aria-hidden="true"></i>
+          
+          关于小站
+        </a></li>
+      
+    </ul>
+  </div>
+</section>
+
+          
+        
+      
+        
+          
+          
+            
+  <section class="widget category">
+    
+<header class="pure">
+  <div><i class="fas fa-folder-open fa-fw" aria-hidden="true"></i>&nbsp;&nbsp;文章分类</div>
+  
+    <a class="rightBtn" rel="nofollow" href="/blog/categories/" title="blog/categories/">
+    <i class="fas fa-expand-arrows-alt fa-fw"></i></a>
+  
+</header>
+
+    <div class="content pure">
+      <ul class="entry">
+        
+          <li><a class="flat-box" title="/categories/hexo/" href="/categories/hexo/"><div class="name">hexo</div><div class="badge">(1)</div></a></li>
+        
+          <li><a class="flat-box" title="/categories/spark/" href="/categories/spark/"><div class="name">spark</div><div class="badge">(1)</div></a></li>
+        
+          <li><a class="flat-box" title="/categories/数据可视化/" href="/categories/数据可视化/"><div class="name">数据可视化</div><div class="badge">(1)</div></a></li>
+        
+      </ul>
+    </div>
+  </section>
+
+
+          
+        
+      
+        
+          
+          
+            
+  <section class="widget tagcloud">
+    
+<header class="pure">
+  <div><i class="fas fa-fire fa-fw" aria-hidden="true"></i>&nbsp;&nbsp;热门标签</div>
+  
+    <a class="rightBtn" rel="nofollow" href="/blog/tags/" title="blog/tags/">
+    <i class="fas fa-expand-arrows-alt fa-fw"></i></a>
+  
+</header>
+
+    <div class="content pure">
+      <a href="/tags/d3-js/" style="font-size: 14px; color: #999">d3.js</a> <a href="/tags/d3-js数据可视化/" style="font-size: 14px; color: #999">d3.js数据可视化</a> <a href="/tags/echart-js/" style="font-size: 14px; color: #999">echart.js</a> <a href="/tags/hexo博客/" style="font-size: 14px; color: #999">hexo博客</a> <a href="/tags/spark/" style="font-size: 14px; color: #999">spark</a> <a href="/tags/sparkSQL/" style="font-size: 14px; color: #999">sparkSQL</a> <a href="/tags/博客搭建/" style="font-size: 14px; color: #999">博客搭建</a> <a href="/tags/大数据/" style="font-size: 14px; color: #999">大数据</a> <a href="/tags/数据分析/" style="font-size: 14px; color: #999">数据分析</a> <a href="/tags/数据可视化/" style="font-size: 14px; color: #999">数据可视化</a>
+    </div>
+  </section>
+
+
+          
+        
+      
+        
+          
+          
+            
+
+
+  <section class="widget music">
+    
+<header class="pure">
+  <div><i class="fas fa-music fa-fw" aria-hidden="true"></i>&nbsp;&nbsp;最近在听</div>
+  
+    <a class="rightBtn" rel="external nofollow noopener noreferrer" target="_blank" href="https://music.163.com/#/user/home?id=135042447" title="https://music.163.com/#/user/home?id=135042447">
+    <i class="far fa-heart fa-fw"></i></a>
+  
+</header>
+
+    <div class="content pure">
+      
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer@1.7.0/dist/APlayer.min.css">
+  <div class="aplayer" data-theme="#1BCDFC" data-mode="circulation" data-server="netease" data-type="playlist" data-id="2807439658" data-volume="0.7">
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/aplayer@1.7.0/dist/APlayer.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/meting@1.1.0/dist/Meting.min.js"></script>
+
+
+    </div>
+  </section>
+
+
+          
+        
+      
+    
+
+  
+</aside>
+
+<footer id="footer" class="clearfix">
+  
+  
+    <div class="social-wrapper">
+      
+        
+          <a href="/atom.xml" class="social fas fa-rss flat-btn" target="_blank" rel="external nofollow noopener noreferrer">
+          </a>
+        
+      
+        
+          <a href="mailto:me@xaoxuu.com" class="social fas fa-envelope flat-btn" target="_blank" rel="external nofollow noopener noreferrer">
+          </a>
+        
+      
+        
+          <a href="https://github.com/kirito2440222510?tab=repositories" class="social fab fa-github flat-btn" target="_blank" rel="external nofollow noopener noreferrer">
+          </a>
+        
+      
+        
+          <a href="https://music.163.com/#/user/home?id=135042447" class="social fas fa-headphones-alt flat-btn" target="_blank" rel="external nofollow noopener noreferrer">
+          </a>
+        
+      
+    </div>
+  
+  <br>
+  <div><p>博客内容遵循 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">署名-非商业性使用-相同方式共享 4.0 国际 (CC BY-NC-SA 4.0) 协议</a></p>
+</div>
+  <div>
+    本站使用
+    <a href="https://xaoxuu.com/wiki/material-x/" target="_blank" class="codename">Material X</a>
+    作为主题
+    
+      ，
+      总访问量为
+      <span id="busuanzi_value_site_pv"><i class="fas fa-spinner fa-spin fa-fw" aria-hidden="true"></i></span>
+      次
+    
+    。
+  </div>
+  <i class="fas fa-chart-area"></i>
+  <span id="timeDate">载入天数...</span><span id="times">载入时分秒...</span>
+<script>
+    var now = new Date(); 
+    function createtime() { 
+        var grt= new Date("05/18/2019 17:38:00");//在此处修改你的建站时间
+        now.setTime(now.getTime()+250); 
+        days = (now - grt ) / 1000 / 60 / 60 / 24; dnum = Math.floor(days); 
+        hours = (now - grt ) / 1000 / 60 / 60 - (24 * dnum); hnum = Math.floor(hours); 
+        if(String(hnum).length ==1 ){hnum = "0" + hnum;} minutes = (now - grt ) / 1000 /60 - (24 * 60 * dnum) - (60 * hnum); 
+        mnum = Math.floor(minutes); if(String(mnum).length ==1 ){mnum = "0" + mnum;} 
+        seconds = (now - grt ) / 1000 - (24 * 60 * 60 * dnum) - (60 * 60 * hnum) - (60 * mnum); 
+        snum = Math.round(seconds); if(String(snum).length ==1 ){snum = "0" + snum;} 
+        document.getElementById("timeDate").innerHTML = "本站已努力运行 "+dnum+" 天 "; 
+        document.getElementById("times").innerHTML = hnum + " 小时 " + mnum + " 分 " + snum + " 秒"; 
+    } 
+setInterval("createtime()",250);
+</script>
+	<span class="post-count"> || 字数统计：4.4k</span>
+	
+	<script type="text/javascript" src="/js/cooltext.js"></script>
+
+	
+	
+	
+	
+	
+</footer>
+
+<script>setLoadingBarProgress(80);</script>
+
+
+      <script>setLoadingBarProgress(60);</script>
+    </div>
+    <a class="s-top fas fa-arrow-up fa-fw" href='javascript:void(0)'></a>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script>
+
+  <script>
+    var GOOGLE_CUSTOM_SEARCH_API_KEY = "";
+    var GOOGLE_CUSTOM_SEARCH_ENGINE_ID = "";
+    var ALGOLIA_API_KEY = "";
+    var ALGOLIA_APP_ID = "";
+    var ALGOLIA_INDEX_NAME = "";
+    var AZURE_SERVICE_NAME = "";
+    var AZURE_INDEX_NAME = "";
+    var AZURE_QUERY_KEY = "";
+    var BAIDU_API_ID = "";
+    var SEARCH_SERVICE = "hexo" || "hexo";
+    var ROOT = "/"||"/";
+    if(!ROOT.endsWith('/'))ROOT += '/';
+  </script>
+
+<script src="//instant.page/1.2.2" type="module" integrity="sha384-2xV8M5griQmzyiY3CDqh1dn4z3llDVqZDqzjzcY+jCBCk/a5fXJmuZ/40JJAPeoU"></script>
+
+
+  <script async src="https://cdn.jsdelivr.net/npm/scrollreveal@4.0.5/dist/scrollreveal.min.js"></script>
+  <script type="text/javascript">
+    $(function() {
+      const $reveal = $('.reveal');
+      if ($reveal.length === 0) return;
+      const sr = ScrollReveal({ distance: 0 });
+      sr.reveal('.reveal');
+    });
+  </script>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/node-waves@0.7.6/dist/waves.min.js"></script>
+  <script type="text/javascript">
+    $(function() {
+      Waves.attach('.flat-btn', ['waves-button']);
+      Waves.attach('.float-btn', ['waves-button', 'waves-float']);
+      Waves.attach('.float-btn-light', ['waves-button', 'waves-float', 'waves-light']);
+      Waves.attach('.flat-box', ['waves-block']);
+      Waves.attach('.float-box', ['waves-block', 'waves-float']);
+      Waves.attach('.waves-image');
+      Waves.init();
+    });
+  </script>
+
+
+  <script async src="https://cdn.jsdelivr.net/gh/xaoxuu/cdn-busuanzi@2.3/js/busuanzi.pure.mini.js"></script>
+
+
+
+
+  
+  
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-backstretch/2.0.4/jquery.backstretch.min.js"></script>
+    <script type="text/javascript">
+      $(function(){
+        if ('.cover') {
+          $('.cover').backstretch(
+          ["https://img.vim-cn.com/6d/a0c9e6f9efad8b731cb7376504bd10d79d2053.jpg"],
+          {
+            duration: "6000",
+            fade: "2500"
+          });
+        } else {
+          $.backstretch(
+          ["https://img.vim-cn.com/6d/a0c9e6f9efad8b731cb7376504bd10d79d2053.jpg"],
+          {
+            duration: "6000",
+            fade: "2500"
+          });
+        }
+      });
+    </script>
+  
+
+
+
+
+
+
+
+
+
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  
+    
+      <script src="https://cdn.jsdelivr.net/gh/xaoxuu/volantis@1/js/volantis.min.js"></script>
+    
+  
+  <script>
+  var GUEST_INFO = ['nick','mail','link'];
+  var guest_info = 'nick,mail,link'.split(',').filter(function(item){
+    return GUEST_INFO.indexOf(item) > -1
+  });
+  var notify = 'false' == true;
+  var verify = 'false' == true;
+  var valine = new Valine();
+  valine.init({
+    el: '#valine_container',
+    notify: notify,
+    verify: verify,
+    guest_info: guest_info,
+    
+    appId: "abGteX1Cf6ORaW5Wxnx2K9I5-gzGzoHsz",
+    appKey: "5LThEGMsRjKd7kOTyolB6hxv",
+    placeholder: "快来评论吧~",
+    pageSize:'10',
+    avatar:'mp',
+    lang:'zh-cn',
+    highlight:'false'
+  })
+  </script>
+
+
+
+  <script src="https://cdn.jsdelivr.net/gh/xaoxuu/cdn-material-x@19.4.19/js/app.js"></script>
+
+
+  <script src="https://cdn.jsdelivr.net/gh/xaoxuu/cdn-material-x@19.4.19/js/search.js"></script>
+
+
+
+
+<!-- 复制 -->
+<script src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js"></script>
+<script>
+  let COPY_SUCCESS = "复制成功";
+  let COPY_FAILURE = "复制失败";
+  /*页面载入完成后，创建复制按钮*/
+  !function (e, t, a) {
+    /* code */
+    var initCopyCode = function(){
+      var copyHtml = '';
+      copyHtml += '<button class="btn-copy" data-clipboard-snippet="">';
+      copyHtml += '  <i class="fa fa-copy"></i><span>复制</span>';
+      copyHtml += '</button>';
+      $(".highlight .code pre").before(copyHtml);
+      var clipboard = new ClipboardJS('.btn-copy', {
+        target: function(trigger) {
+          return trigger.nextElementSibling;
+        }
+      });
+
+      clipboard.on('success', function(e) {
+        //您可以加入成功提示
+        console.info('Action:', e.action);
+        console.info('Text:', e.text);
+        console.info('Trigger:', e.trigger);
+        success_prompt(COPY_SUCCESS);
+        e.clearSelection();
+      });
+      clipboard.on('error', function(e) {
+        //您可以加入失败提示
+        console.error('Action:', e.action);
+        console.error('Trigger:', e.trigger);
+        fail_prompt(COPY_FAILURE);
+      });
+    }
+    initCopyCode();
+
+  }(window, document);
+
+  /**
+   * 弹出式提示框，默认1.5秒自动消失
+   * @param message 提示信息
+   * @param style 提示样式，有alert-success、alert-danger、alert-warning、alert-info
+   * @param time 消失时间
+   */
+  var prompt = function (message, style, time)
+  {
+      style = (style === undefined) ? 'alert-success' : style;
+      time = (time === undefined) ? 1500 : time*1000;
+      $('<div>')
+          .appendTo('body')
+          .addClass('alert ' + style)
+          .html(message)
+          .show()
+          .delay(time)
+          .fadeOut();
+  };
+
+  // 成功提示
+  var success_prompt = function(message, time)
+  {
+      prompt(message, 'alert-success', time);
+  };
+
+  // 失败提示
+  var fail_prompt = function(message, time)
+  {
+      prompt(message, 'alert-danger', time);
+  };
+
+  // 提醒
+  var warning_prompt = function(message, time)
+  {
+      prompt(message, 'alert-warning', time);
+  };
+
+  // 信息提示
+  var info_prompt = function(message, time)
+  {
+      prompt(message, 'alert-info', time);
+  };
+
+</script>
+
+
+<!-- fancybox -->
+<script src="https://cdn.jsdelivr.net/gh/fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js"></script>
+<script>
+  let LAZY_LOAD_IMAGE = "";
+  $(".article-entry").find("fancybox").find("img").each(function () {
+      var element = document.createElement("a");
+      $(element).attr("data-fancybox", "gallery");
+      $(element).attr("href", $(this).attr("src"));
+      /* 图片采用懒加载处理时,
+       * 一般图片标签内会有个属性名来存放图片的真实地址，比如 data-original,
+       * 那么此处将原本的属性名src替换为对应属性名data-original,
+       * 修改如下
+       */
+       if (LAZY_LOAD_IMAGE) {
+         $(element).attr("href", $(this).attr("data-original"));
+       }
+      $(this).wrap(element);
+  });
+</script>
+
+
+
+
+<script src="/js/sweetalert.min.js"></script>
+<script src="/js/sweetalert-dev.js"></script>
+<script type="text/javascript">
+document.body.oncopy=function(){swal("复制成功!", "如需转载文章请注意声明原文出处，谢谢合作！", "succ
+ess");}
+</script>
+
+  <script>setLoadingBarProgress(100);</script>
+  <!--单击显示文字-->
+  <script type="text/javascript" src="/js/click_show_text.js"></script>
+  <script type="text/javascript" src="/js/caihong.js"></script>
+  <!--浏览器搞笑标题-->
+<script type="text/javascript" src="\js\FunnyTitle.js"></script>
+<!-- 样式二（飘动的彩带） -->
+<script src="https://g.joyinshare.com/hc/piao.js" type="text/javascript"></script>
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"debug":false,"model":{"jsonPath":"/live2dw/assets/rem.model.json"},"display":{"position":"right","width":300,"height":400},"mobile":{"show":false},"react":{"opacity":0.85},"log":false});</script></body>
+</html>
